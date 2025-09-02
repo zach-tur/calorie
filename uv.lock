@@ -84,12 +84,14 @@ name = "calorie"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
+    { name = "rich" },
     { name = "textual" },
     { name = "textual-dev" },
 ]
 
 [package.metadata]
 requires-dist = [
+    { name = "rich", specifier = ">=14.1.0" },
     { name = "textual", specifier = ">=6.1.0" },
     { name = "textual-dev", specifier = ">=1.7.0" },
 ]
