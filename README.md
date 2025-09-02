@@ -1,7 +1,7 @@
 
 A simple calorie tracking app in the terminal.
 
-# Features:
+# Core Features:
 - Set goals for Carbohydrates, Fats, Proteins, Fiber
 - Track weight
 - Graphical display of daily intake and goals
@@ -11,4 +11,7 @@ A simple calorie tracking app in the terminal.
 	- Bar or line graphs
 - Input entries weighed as grams
 - Food items manually added
-	- Future: pull nutrition information from https://fdc.nal.usda.gov/api-guide
+
+## Future: 
+- Pull nutrition information from https://fdc.nal.usda.gov/api-guide
+- Create meals that can be split into portions for entry
