@@ -1,0 +1,27 @@
+#buttons {
+	align: center top;
+	margin: 1 1 1 1;
+	height: 3;
+	width: 100%;
+	background: gray 20%;
+}
+
+
+StatusHeader {
+	dock: top;
+	align: center top;
+	background: gray 20%;
+}
+
+ViewSwitcher {
+	align: center top;
+	margin: 1 1 1 1;
+	padding: 1;
+	width: 100%;
+	height: auto;
+	background: gray 20%;
+}
+
+ContentSwitcher {
+	width: 100%;
+}
