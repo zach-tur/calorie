@@ -37,10 +37,16 @@
 }
 
 #status_bars {
+	height: auto;
 }
 
-#bar_fat {
-	color: yellow;
+#bar_exceeded > .bar--bar {
+	color: red;
+	height: auto;
+}
+
+#bar_fat Bar.bar--complete {
+	background: green;
 }
 
 #status_cal_labels {

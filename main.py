@@ -35,40 +35,101 @@ import sqlite3
 import src.sql_handling as db
 
 
+class StatusBarExceeded(ProgressBar):
+    def compose(self) -> ComposeResult:
+        gradient = Gradient.from_colors("red", "red")
+        yield ProgressBar(
+            total=1,
+            show_eta=False,
+            show_percentage=False,
+            gradient=gradient,
+            id="bar_exceeded",
+        )
+
+    def on_mount(self) -> None:
+        self.query_one(ProgressBar).update(progress=0)
+
+
 class StatusBarFat(ProgressBar):
     def compose(self) -> ComposeResult:
         gradient = Gradient.from_colors("yellow", "orange")
-        yield ProgressBar(total=100, show_eta=False, gradient=gradient)
+        yield ProgressBar(
+            total=100,
+            show_eta=False,
+            show_percentage=False,
+            gradient=gradient,
+            id="bar_fat",
+        )
+        yield StatusBarExceeded()
 
     def on_mount(self) -> None:
-        self.query_one(ProgressBar).update(progress=30)
+        overflow = 0
+        bar_fat = self.query_one(ProgressBar)
+        bar_exceeded = self.query_one(StatusBarExceeded)
+
+        bar_fat.update(progress=100)  # Add total fat call here
+        if overflow > 0:
+            bar_exceeded.update(total=overflow, progress=overflow)
 
 
 class StatusBarCarb(ProgressBar):
     def compose(self) -> ComposeResult:
         gradient = Gradient.from_colors("lightgreen", "darkgreen")
-        yield ProgressBar(total=100, show_eta=False, gradient=gradient)
+        yield ProgressBar(
+            total=100,
+            show_eta=False,
+            show_percentage=False,
+            gradient=gradient,
+            id="bar_carb",
+        )
+
+        yield StatusBarExceeded()
 
     def on_mount(self) -> None:
-        self.query_one(ProgressBar).update(progress=40)
+        bar_carb = self.query_one("#bar_carb", ProgressBar)
+        bar_exceeded = self.query_one("#bar_exceeded", ProgressBar)
+        bar_carb.update(progress=100)  # Add total carb call here
+        bar_exceeded.update(
+            progress=10
+        )  # Add if statement to check if exceeded and call this
 
 
 class StatusBarFiber(ProgressBar):
     def compose(self) -> ComposeResult:
         gradient = Gradient.from_colors("tan", "sienna")
-        yield ProgressBar(total=100, show_eta=False, gradient=gradient)
+        yield ProgressBar(
+            total=100,
+            show_eta=False,
+            show_percentage=False,
+            gradient=gradient,
+            id="bar_fiber",
+        )
 
     def on_mount(self) -> None:
-        self.query_one(ProgressBar).update(progress=50)
+        bar_fiber = self.query_one("#bar_fiber", ProgressBar)
+        bar_fiber.update(progress=100)  # Add total fiber call here
 
 
 class StatusBarProtein(ProgressBar):
     def compose(self) -> ComposeResult:
-        gradient = Gradient.from_colors("red", "darkred")
-        yield ProgressBar(total=100, show_eta=False, gradient=gradient)
+        gradient = Gradient.from_colors("tomato", "darkred")
+        with Horizontal():
+            yield ProgressBar(
+                total=100,
+                show_eta=False,
+                show_percentage=False,
+                gradient=gradient,
+                id="bar_protein",
+            )
+            yield StatusBarExceeded()
 
     def on_mount(self) -> None:
-        self.query_one(ProgressBar).update(progress=60)
+        bar_protein = self.query_one("#bar_protein", ProgressBar)
+        bar_exceeded = self.query_one("#bar_exceeded", ProgressBar)
+        bar_protein.update(progress=100)  # Add total protein call here
+        bar_exceeded.update(
+            progress=10
+        )  # Add if statement to check if exceeded and call this
 
 
 class StatusHeader(HorizontalGroup):
@@ -79,10 +140,10 @@ class StatusHeader(HorizontalGroup):
             yield Static("FIBER ", id="fiber_bar_label")
             yield Static("PROTEIN ", id="protein_bar_label")
         with VerticalGroup(id="status_bars"):
-            yield StatusBarFat(id="bar_fat")
-            yield StatusBarCarb(id="bar_carb")
-            yield StatusBarFiber(id="bar_fiber")
-            yield StatusBarProtein(id="bar_protein")
+            yield StatusBarFat()
+            yield StatusBarCarb()
+            yield StatusBarFiber()
+            yield StatusBarProtein()
         with VerticalGroup(id="status_cal_labels"):
             yield Static("Calories Today: ", id="calories_today")
             yield Static("Calories Target: ", id="calories_target")
