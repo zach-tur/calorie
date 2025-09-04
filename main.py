@@ -1,8 +1,11 @@
 import os
+from timeit import Timer
 import textual
 import textual_dev
 from textual.app import App, ComposeResult
+from textual.color import Gradient
 from textual.containers import (
+    Center,
     Container,
     Grid,
     Horizontal,
@@ -12,6 +15,7 @@ from textual.containers import (
     VerticalGroup,
     VerticalScroll,
 )
+from textual.reactive import reactive
 from textual.screen import Screen
 from textual.widgets import (
     Button,
@@ -21,7 +25,9 @@ from textual.widgets import (
     Header,
     Label,
     Placeholder,
+    ProgressBar,
     Rule,
+    Static,
 )
 
 
@@ -29,9 +35,62 @@ import sqlite3
 import src.sql_handling as db
 
 
-class StatusHeader(VerticalGroup):
+class StatusBarFat(ProgressBar):
     def compose(self) -> ComposeResult:
-        yield Label("daily status goes here")
+        gradient = Gradient.from_colors("yellow", "orange")
+        yield ProgressBar(total=100, show_eta=False, gradient=gradient)
+
+    def on_mount(self) -> None:
+        self.query_one(ProgressBar).update(progress=30)
+
+
+class StatusBarCarb(ProgressBar):
+    def compose(self) -> ComposeResult:
+        gradient = Gradient.from_colors("lightgreen", "darkgreen")
+        yield ProgressBar(total=100, show_eta=False, gradient=gradient)
+
+    def on_mount(self) -> None:
+        self.query_one(ProgressBar).update(progress=40)
+
+
+class StatusBarFiber(ProgressBar):
+    def compose(self) -> ComposeResult:
+        gradient = Gradient.from_colors("tan", "sienna")
+        yield ProgressBar(total=100, show_eta=False, gradient=gradient)
+
+    def on_mount(self) -> None:
+        self.query_one(ProgressBar).update(progress=50)
+
+
+class StatusBarProtein(ProgressBar):
+    def compose(self) -> ComposeResult:
+        gradient = Gradient.from_colors("red", "darkred")
+        yield ProgressBar(total=100, show_eta=False, gradient=gradient)
+
+    def on_mount(self) -> None:
+        self.query_one(ProgressBar).update(progress=60)
+
+
+class StatusHeader(HorizontalGroup):
+    def compose(self) -> ComposeResult:
+        with VerticalGroup(id="status_bar_labels"):
+            yield Static("FAT ", id="fat_bar_label")
+            yield Static("CARB ", id="carb_bar_label")
+            yield Static("FIBER ", id="fiber_bar_label")
+            yield Static("PROTEIN ", id="protein_bar_label")
+        with VerticalGroup(id="status_bars"):
+            yield StatusBarFat(id="bar_fat")
+            yield StatusBarCarb(id="bar_carb")
+            yield StatusBarFiber(id="bar_fiber")
+            yield StatusBarProtein(id="bar_protein")
+        with VerticalGroup(id="status_cal_labels"):
+            yield Static("Calories Today: ", id="calories_today")
+            yield Static("Calories Target: ", id="calories_target")
+            yield Static("Leftover: ", id="calories_leftover")
+        with VerticalGroup(id="status_cals"):
+            yield Static("x,xxx cal", id="today_number")
+            yield Static("1,800 cal", id="target_number")
+            yield Static("800 cal", id="leftover_number")
 
 
 class ViewSwitcher(VerticalGroup):
@@ -55,9 +114,9 @@ class ViewSwitcher(VerticalGroup):
         self.query_one(ContentSwitcher).current = event.button.id
 
 
-class Log(Placeholder):
+class Log(Grid):
     def compose(self) -> ComposeResult:
-        yield Label("This is the daily log tab")
+        yield Label("This is the daily log tab", classes="outline border")
 
 
 class FoodBook(Placeholder):
@@ -95,7 +154,9 @@ class CalorieApp(App):
     def compose(self) -> ComposeResult:
         # Create child widgets for the app
         yield Header()
-        yield Container(StatusHeader(), ViewSwitcher())
+        with Vertical():
+            yield StatusHeader(id="status_header")
+            yield ViewSwitcher()
         yield Footer()
 
     def action_request_quit(self) -> None:

@@ -1,27 +1,114 @@
 #buttons {
-	align: center top;
-	margin: 1 1 1 1;
+	align: center middle;
+	padding: 0 0 0 0;
 	height: 3;
 	width: 100%;
-	background: gray 20%;
 }
 
+#status_group_bars {
+}
+
+#status_group_cals {
+}
+
+#status_bar_labels {
+	align: right middle;
+	width: 8;
+}
+
+#fat_bar_label {
+	text-align: right;
+	height: auto;
+}
+
+#carb_bar_label {
+	text-align: right;
+	height: auto;
+}
+
+#fiber_bar_label {
+	text-align: right;
+	height: auto;
+}
+
+#protein_bar_label {
+	text-align: right;
+	height: auto;
+}
+
+#status_bars {
+}
+
+#bar_fat {
+	color: yellow;
+}
+
+#status_cal_labels {
+	align: right middle;
+}
+
+#calories_today {
+	text-align: right;
+	height: auto;
+}
+
+#calories_target {
+	text-align: right;
+	height: auto;
+}
+
+#calories_leftover {
+	text-align: right;
+	height: auto;
+}
+
+#status_cals {
+	dock: right;
+	width: 10;
+}
+
+#today_number {
+	text-align: right;
+}
+
+#target_number {
+	text-align: right;
+}
+
+#leftover_number {
+	text-align: right;
+}
+
+.outline {
+	outline: $error round;
+}
+
+.border {
+	border: $success heavy;
+}
 
 StatusHeader {
+	padding: 1 1 1 1;
 	dock: top;
-	align: center top;
-	background: gray 20%;
 }
 
 ViewSwitcher {
 	align: center top;
-	margin: 1 1 1 1;
-	padding: 1;
+	padding: 0 1 1 1;
 	width: 100%;
 	height: auto;
 	background: gray 20%;
 }
 
 ContentSwitcher {
+	padding: 0;
 	width: 100%;
 }
+
+Log {
+	align: center top;
+}
+
+FoodBook {}
+
+Goals {}
