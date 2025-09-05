@@ -203,11 +203,11 @@ class DailyTable(VerticalScroll):
         table.add_column(Text("Item", justify="center"), width=22)
         table.add_column(Text("Serving", justify="center"), width=8)
         table.add_column(Text("Cals", justify="center"), width=8)
-        table.add_column(Text("Fat", style="bold yellow", justify="center"), width=13)
-        table.add_column(Text("Carb", style="bold lime", justify="center"), width=13)
-        table.add_column(Text("Protein", style="bold red", justify="center"), width=13)
-        table.add_column(Text("Fiber", style="bold brown", justify="center"), width=7)
-        table.show_header = False
+        table.add_column(Text("Fat", justify="center"), width=13)
+        table.add_column(Text("Carb", justify="center"), width=13)
+        table.add_column(Text("Protein", justify="center"), width=13)
+        table.add_column(Text("Fiber", justify="center"), width=7)
+
         ROWS = [
             (
                 "test banana",
