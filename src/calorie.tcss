@@ -4,9 +4,10 @@
 
 #buttons {
 	align: center middle;
-	padding: 0 0 0 0;
-	height: 3;
+	padding: 1 0 1 0;
+	height: 5;
 	width: 100%;
+	background: rgb(40, 40, 40);
 }
 
 #status_group_bars {
@@ -22,7 +23,6 @@
 
 #fat_bar_label {
 	text-align: right;
-	color: yellow;
 	text-style: bold;
 	height: auto;
 }
@@ -135,6 +135,98 @@
 	text-align: right;
 }
 
+#input_label_item {
+	align: center top;
+	content-align: center top;
+	width: 23;
+}
+
+#input_label_item_l {
+	text-align: center;
+	background: rgb(55, 55, 55);
+	width: 23;
+}
+
+#input_label_serving {
+	width: 9;
+}
+
+#input_label_serving_l {
+	text-align: center;
+	background: rgb(55, 55, 55);
+	width: 9;
+}
+
+#input_label_cals {
+	width: 9;
+}
+
+#input_label_cals_l {
+	text-align: center;
+	background: rgb(55, 55, 55);
+	width: 9;
+}
+
+#input_label_fat {
+	width: 14;
+}
+
+#input_label_fat_l {
+	text-align: center;
+	background: rgb(55, 55, 55);
+	width: 14;
+}
+
+#input_label_carb {
+	width: 14;
+}
+
+#input_label_carb_l {
+	text-align: center;
+	background: rgb(55, 55, 55);
+	width: 14;
+}
+
+#input_label_protein {
+	width: 14;
+}
+
+#input_label_protein_l {
+	text-align: center;
+	background: rgb(55, 55, 55);
+	width: 14;
+}
+
+#input_label_fiber {
+	width: 8;
+}
+
+#input_label_fiber_l {
+	text-align: center;
+	background: rgb(55, 55, 55);
+	width: 8;
+}
+
+#daily_input_table {
+	align: center top;
+	height: 3;
+}
+
+#daily_entry_buttons {
+	align: center top;
+	content-align: center top;
+	padding: 0 0 0 0;
+	height: 3;
+}
+
+#daily_submit_button {
+	align: center top;
+}
+
+#daily_reset_button {
+	align: center top;
+}
+
 .outline {
 	outline: $error round;
 }
@@ -154,7 +246,6 @@ ViewSwitcher {
 	padding: 0 1 1 1;
 	width: 100%;
 	height: auto;
-	background: gray 20%;
 }
 
 ContentSwitcher {
@@ -175,7 +266,7 @@ DailyEntry {
 	align: center middle;
 	text-align: center;
 	width: auto;
-	height: 4;
+	height: auto;
 	padding: 1 0 1 0;
 }
 
@@ -187,6 +278,7 @@ StaticSpacer {
 Input {
 	border: none;
 	background: rgb(30, 30, 30);
+	height: 1;
 }
 
 DailyTable {

@@ -1,9 +1,11 @@
 import os
 from timeit import Timer
 
+from rich import style
 from rich.text import Text
 
 import textual
+from textual.visual import RichVisual
 import textual_dev
 from textual.app import App, ComposeResult
 from textual.color import Gradient
@@ -100,7 +102,7 @@ class StatusBarProtein(HorizontalGroup):
 class StatusHeader(HorizontalGroup):
     def compose(self) -> ComposeResult:
         with VerticalGroup(id="status_bar_labels"):
-            yield Static("FAT ", id="fat_bar_label")
+            yield Static(Text("FAT ", style="bold yellow"), id="fat_bar_label")
             yield Static("CARB ", id="carb_bar_label")
             yield Static("FIBER ", id="fiber_bar_label")
             yield Static("PROTEIN ", id="protein_bar_label")
@@ -131,34 +133,65 @@ class StaticSpacer(Container):
 
 class DailyEntry(Vertical):
     def compose(self) -> ComposeResult:
-        with Horizontal():
-            with Vertical():
-                yield Static("Item")
+        with Horizontal(id="daily_input_table"):
+            with VerticalGroup(id="input_label_item"):
+                yield Label(
+                    Text("Item", style="bold", justify="right"), id="input_label_item_l"
+                )
                 yield Input(id="input_item")
             yield StaticSpacer()
-            with Vertical():
-                yield Label("Serving")
+
+            with VerticalGroup(id="input_label_serving"):
+                yield Label(
+                    Text("Serving", style="bold", justify="center"),
+                    id="input_label_serving_l",
+                )
                 yield Input(id="input_serving")
             yield StaticSpacer()
-            with Vertical():
-                yield Label("Cals")
+
+            with VerticalGroup(id="input_label_cals"):
+                yield Label(
+                    Text("Cals", style="bold", justify="center"),
+                    id="input_label_cals_l",
+                )
                 yield Input(id="input_cals")
             yield StaticSpacer()
-            with Vertical():
-                yield Label("Fat")
+
+            with VerticalGroup(id="input_label_fat"):
+                yield Label(
+                    Text("Fat", style="bold yellow", justify="center"),
+                    id="input_label_fat_l",
+                )
                 yield Input(id="input_fat")
             yield StaticSpacer()
-            with Vertical():
-                yield Label("Carb")
+
+            with VerticalGroup(id="input_label_carb"):
+                yield Label(
+                    Text("Carb", style="bold lime", justify="center"),
+                    id="input_label_carb_l",
+                )
                 yield Input(id="input_carb")
             yield StaticSpacer()
-            with Vertical():
-                yield Label("Fiber")
-                yield Input(id="input_fiber")
-            yield StaticSpacer()
-            with Vertical():
-                yield Label("Protein")
+
+            with VerticalGroup(id="input_label_protein"):
+                yield Label(
+                    Text("Protein", style="bold red", justify="center"),
+                    id="input_label_protein_l",
+                )
                 yield Input(id="input_protein")
+            yield StaticSpacer()
+
+            with VerticalGroup(id="input_label_fiber"):
+                yield Label(
+                    Text("Fiber", style="bold brown", justify="center"),
+                    id="input_label_fiber_l",
+                )
+                yield Input(id="input_fiber")
+
+        with Horizontal(id="daily_entry_buttons"):
+            yield Button("Submit")  # , id="daily_submit_button")
+            yield StaticSpacer()
+            yield Button("Reset")  # , id="daily_reset_button")
 
 
 class DailyTable(VerticalScroll):
@@ -167,16 +200,14 @@ class DailyTable(VerticalScroll):
 
     def on_mount(self) -> None:
         table = self.query_one(DataTable)
-        table.add_column(Text("Item", justify="center"), width=31)
-        table.add_column(Text("Serving", justify="center"), width=7)
+        table.add_column(Text("Item", justify="center"), width=22)
+        table.add_column(Text("Serving", justify="center"), width=8)
         table.add_column(Text("Cals", justify="center"), width=8)
-        table.add_column(Text("Fat", style="yellow", justify="center"), width=11)
-        table.add_column(Text("Carb", style="lime", justify="center"), width=11)
-        table.add_column(Text("Fiber", style="brown", justify="center"), width=5)
-        table.add_column(
-            Text("Protein", style="bright_red", justify="center"), width=11
-        )
-
+        table.add_column(Text("Fat", style="bold yellow", justify="center"), width=13)
+        table.add_column(Text("Carb", style="bold lime", justify="center"), width=13)
+        table.add_column(Text("Protein", style="bold red", justify="center"), width=13)
+        table.add_column(Text("Fiber", style="bold brown", justify="center"), width=7)
+        table.show_header = False
         ROWS = [
             (
                 "test banana",
@@ -184,8 +215,8 @@ class DailyTable(VerticalScroll):
                 "360cal",
                 "0g / 0cal",
                 "120g / 360cal",
-                "5g",
                 "0g / 0cal",
+                "5g",
             )
         ]
         for row in ROWS:
@@ -199,9 +230,9 @@ class DailyLog(Container):
         yield DailyTable()
 
 
-class FoodBook(Placeholder):
-    def compose(self) -> ComposeResult:
-        yield Label("This is the Food Book tab")
+# class FoodBook(Placeholder):
+#    def compose(self) -> ComposeResult:
+#        yield Label("This is the Food Book tab")
 
 
 class Goals(Placeholder):
@@ -213,21 +244,21 @@ class ViewSwitcher(VerticalGroup):
     def compose(self) -> ComposeResult:
         with Horizontal(id="buttons"):
             yield Button("Daily Log", id="daily_log")
-            yield Rule(orientation="vertical")
-            yield Button("FoodBook", id="foodbook")
-            yield Rule(orientation="vertical")
+            yield StaticSpacer()
+            #            yield Button("FoodBook", id="foodbook")
+            #            yield Rule(orientation="vertical")
             yield Button("Goals", id="goals")
-
         with ContentSwitcher(initial="daily_log"):
             with Vertical(id="daily_log"):
                 yield DailyLog()
-            with Vertical(id="foodbook"):
-                yield FoodBook()
+            #            with Vertical(id="foodbook"):
+            #                yield FoodBook()
             with Vertical(id="goals"):
                 yield Goals()
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
-        self.query_one(ContentSwitcher).current = event.button.id
+        if event.button.id == "daily_log" or event.button.id == "goals":
+            self.query_one(ContentSwitcher).current = event.button.id
 
 
 class QuitScreen(Screen):
