@@ -1,5 +1,8 @@
 import os
 from timeit import Timer
+
+from rich.text import Text
+
 import textual
 import textual_dev
 from textual.app import App, ComposeResult
@@ -23,6 +26,7 @@ from textual.widgets import (
     DataTable,
     Footer,
     Header,
+    Input,
     Label,
     Placeholder,
     ProgressBar,
@@ -35,101 +39,62 @@ import sqlite3
 import src.sql_handling as db
 
 
-class StatusBarExceeded(ProgressBar):
+class StatusBarFat(HorizontalGroup):
     def compose(self) -> ComposeResult:
-        gradient = Gradient.from_colors("red", "red")
-        yield ProgressBar(
-            total=1,
-            show_eta=False,
-            show_percentage=False,
-            gradient=gradient,
-            id="bar_exceeded",
-        )
-
-    def on_mount(self) -> None:
-        self.query_one(ProgressBar).update(progress=0)
-
-
-class StatusBarFat(ProgressBar):
-    def compose(self) -> ComposeResult:
-        gradient = Gradient.from_colors("yellow", "orange")
         yield ProgressBar(
             total=100,
             show_eta=False,
             show_percentage=False,
-            gradient=gradient,
             id="bar_fat",
         )
-        yield StatusBarExceeded()
 
     def on_mount(self) -> None:
-        overflow = 0
-        bar_fat = self.query_one(ProgressBar)
-        bar_exceeded = self.query_one(StatusBarExceeded)
-
-        bar_fat.update(progress=100)  # Add total fat call here
-        if overflow > 0:
-            bar_exceeded.update(total=overflow, progress=overflow)
+        bar_fat = self.query_one("#bar_fat", ProgressBar)
+        bar_fat.update(progress=100)
+        bar_fat.styles.min_width = 40
 
 
-class StatusBarCarb(ProgressBar):
+class StatusBarCarb(HorizontalGroup):
     def compose(self) -> ComposeResult:
-        gradient = Gradient.from_colors("lightgreen", "darkgreen")
         yield ProgressBar(
             total=100,
             show_eta=False,
             show_percentage=False,
-            gradient=gradient,
             id="bar_carb",
         )
 
-        yield StatusBarExceeded()
-
     def on_mount(self) -> None:
         bar_carb = self.query_one("#bar_carb", ProgressBar)
-        bar_exceeded = self.query_one("#bar_exceeded", ProgressBar)
-        bar_carb.update(progress=100)  # Add total carb call here
-        bar_exceeded.update(
-            progress=10
-        )  # Add if statement to check if exceeded and call this
+        bar_carb.update(progress=20)  # Add total carb call here
 
 
-class StatusBarFiber(ProgressBar):
+class StatusBarFiber(HorizontalGroup):
     def compose(self) -> ComposeResult:
-        gradient = Gradient.from_colors("tan", "sienna")
         yield ProgressBar(
             total=100,
             show_eta=False,
             show_percentage=False,
-            gradient=gradient,
             id="bar_fiber",
         )
 
     def on_mount(self) -> None:
         bar_fiber = self.query_one("#bar_fiber", ProgressBar)
-        bar_fiber.update(progress=100)  # Add total fiber call here
+        bar_fiber.update(progress=40)  # Add total fiber call here
 
 
-class StatusBarProtein(ProgressBar):
+class StatusBarProtein(HorizontalGroup):
     def compose(self) -> ComposeResult:
-        gradient = Gradient.from_colors("tomato", "darkred")
         with Horizontal():
             yield ProgressBar(
                 total=100,
                 show_eta=False,
                 show_percentage=False,
-                gradient=gradient,
                 id="bar_protein",
             )
-            yield StatusBarExceeded()
 
     def on_mount(self) -> None:
         bar_protein = self.query_one("#bar_protein", ProgressBar)
-        bar_exceeded = self.query_one("#bar_exceeded", ProgressBar)
-        bar_protein.update(progress=100)  # Add total protein call here
-        bar_exceeded.update(
-            progress=10
-        )  # Add if statement to check if exceeded and call this
+        bar_protein.update(progress=30)  # Add total protein call here
 
 
 class StatusHeader(HorizontalGroup):
@@ -144,40 +109,94 @@ class StatusHeader(HorizontalGroup):
             yield StatusBarCarb()
             yield StatusBarFiber()
             yield StatusBarProtein()
+        with VerticalGroup(id="status_macros"):
+            yield Static("90 g / 100 g", id="macro_fat")
+            yield Static("90 g / 100 g", id="macro_carb")
+            yield Static("90 g / 100 g", id="macro_fiber")
+            yield Static("90 g / 100 g", id="macro_protein")
         with VerticalGroup(id="status_cal_labels"):
             yield Static("Calories Today: ", id="calories_today")
             yield Static("Calories Target: ", id="calories_target")
             yield Static("Leftover: ", id="calories_leftover")
         with VerticalGroup(id="status_cals"):
-            yield Static("x,xxx cal", id="today_number")
+            yield Static("1,000 cal", id="today_number")
             yield Static("1,800 cal", id="target_number")
             yield Static("800 cal", id="leftover_number")
 
 
-class ViewSwitcher(VerticalGroup):
+class StaticSpacer(Container):
     def compose(self) -> ComposeResult:
-        with Horizontal(id="buttons"):
-            yield Button("Log", id="daily_log")
-            yield Rule(orientation="vertical")
-            yield Button("FoodBook", id="foodbook")
-            yield Rule(orientation="vertical")
-            yield Button("Goals", id="goals")
-
-        with ContentSwitcher(initial="daily_log"):
-            with VerticalScroll(id="daily_log"):
-                yield Log()
-            with VerticalScroll(id="foodbook"):
-                yield FoodBook()
-            with VerticalScroll(id="goals"):
-                yield Goals()
-
-    def on_button_pressed(self, event: Button.Pressed) -> None:
-        self.query_one(ContentSwitcher).current = event.button.id
+        yield Static()
 
 
-class Log(Grid):
+class DailyEntry(Vertical):
     def compose(self) -> ComposeResult:
-        yield Label("This is the daily log tab", classes="outline border")
+        with Horizontal():
+            with Vertical():
+                yield Static("Item")
+                yield Input(id="input_item")
+            yield StaticSpacer()
+            with Vertical():
+                yield Label("Serving")
+                yield Input(id="input_serving")
+            yield StaticSpacer()
+            with Vertical():
+                yield Label("Cals")
+                yield Input(id="input_cals")
+            yield StaticSpacer()
+            with Vertical():
+                yield Label("Fat")
+                yield Input(id="input_fat")
+            yield StaticSpacer()
+            with Vertical():
+                yield Label("Carb")
+                yield Input(id="input_carb")
+            yield StaticSpacer()
+            with Vertical():
+                yield Label("Fiber")
+                yield Input(id="input_fiber")
+            yield StaticSpacer()
+            with Vertical():
+                yield Label("Protein")
+                yield Input(id="input_protein")
+
+
+class DailyTable(VerticalScroll):
+    def compose(self) -> ComposeResult:
+        yield DataTable()
+
+    def on_mount(self) -> None:
+        table = self.query_one(DataTable)
+        table.add_column(Text("Item", justify="center"), width=31)
+        table.add_column(Text("Serving", justify="center"), width=7)
+        table.add_column(Text("Cals", justify="center"), width=8)
+        table.add_column(Text("Fat", style="yellow", justify="center"), width=11)
+        table.add_column(Text("Carb", style="lime", justify="center"), width=11)
+        table.add_column(Text("Fiber", style="brown", justify="center"), width=5)
+        table.add_column(
+            Text("Protein", style="bright_red", justify="center"), width=11
+        )
+
+        ROWS = [
+            (
+                "test banana",
+                "120g",
+                "360cal",
+                "0g / 0cal",
+                "120g / 360cal",
+                "5g",
+                "0g / 0cal",
+            )
+        ]
+        for row in ROWS:
+            styled_row = [Text(str(cell), justify="center") for cell in row]
+            table.add_row(*styled_row)
+
+
+class DailyLog(Container):
+    def compose(self) -> ComposeResult:
+        yield DailyEntry()
+        yield DailyTable()
 
 
 class FoodBook(Placeholder):
@@ -188,6 +207,27 @@ class FoodBook(Placeholder):
 class Goals(Placeholder):
     def compose(self) -> ComposeResult:
         yield Label("This is the Goals tab")
+
+
+class ViewSwitcher(VerticalGroup):
+    def compose(self) -> ComposeResult:
+        with Horizontal(id="buttons"):
+            yield Button("Daily Log", id="daily_log")
+            yield Rule(orientation="vertical")
+            yield Button("FoodBook", id="foodbook")
+            yield Rule(orientation="vertical")
+            yield Button("Goals", id="goals")
+
+        with ContentSwitcher(initial="daily_log"):
+            with Vertical(id="daily_log"):
+                yield DailyLog()
+            with Vertical(id="foodbook"):
+                yield FoodBook()
+            with Vertical(id="goals"):
+                yield Goals()
+
+    def on_button_pressed(self, event: Button.Pressed) -> None:
+        self.query_one(ContentSwitcher).current = event.button.id
 
 
 class QuitScreen(Screen):
@@ -214,11 +254,12 @@ class CalorieApp(App):
 
     def compose(self) -> ComposeResult:
         # Create child widgets for the app
-        yield Header()
-        with Vertical():
-            yield StatusHeader(id="status_header")
-            yield ViewSwitcher()
-        yield Footer()
+        with Vertical(id="main"):
+            yield Header()
+            with Vertical():
+                yield StatusHeader()
+                yield ViewSwitcher()
+            yield Footer()
 
     def action_request_quit(self) -> None:
         # Quit program with confirmation

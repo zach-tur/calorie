@@ -1,3 +1,7 @@
+#main {
+	max_width: 100;
+}
+
 #buttons {
 	align: center middle;
 	padding: 0 0 0 0;
@@ -18,35 +22,78 @@
 
 #fat_bar_label {
 	text-align: right;
+	color: yellow;
+	text-style: bold;
 	height: auto;
 }
 
 #carb_bar_label {
 	text-align: right;
+	color: lime;
+	text-style: bold;
 	height: auto;
 }
 
 #fiber_bar_label {
 	text-align: right;
+	color: brown;
+	text-style: bold;
 	height: auto;
 }
 
 #protein_bar_label {
 	text-align: right;
-	height: auto;
-}
-
-#status_bars {
-	height: auto;
-}
-
-#bar_exceeded > .bar--bar {
+	text-style: bold;
 	color: red;
 	height: auto;
 }
 
-#bar_fat Bar.bar--complete {
-	background: green;
+#status_bars {
+	height: 4;
+}
+
+
+#bar_fat Bar > .bar--bar {
+	color: yellow;
+	background: gray;
+}
+
+#bar_carb Bar > .bar--bar {
+	color: lime;
+	background: gray;
+}
+
+#bar_fiber Bar > .bar--bar {
+	color: brown;
+	background: gray;
+}
+
+#bar_protein Bar > .bar--bar {
+	color: red;
+	background: gray;
+}
+
+#status_macros {
+	align: center top;
+	content-align: center top;
+	padding: 0 0 0 1;
+	width: 15;
+}
+
+#macro_fat {
+	color: yellow;
+}
+
+#macro_carb {
+	color: lime;
+}
+
+#macro_fiber {
+	color: brown;
+}
+
+#macro_protein {
+	color: red;
 }
 
 #status_cal_labels {
@@ -55,16 +102,19 @@
 
 #calories_today {
 	text-align: right;
+	text-style: bold;
 	height: auto;
 }
 
 #calories_target {
 	text-align: right;
+	text-style: bold;
 	height: auto;
 }
 
 #calories_leftover {
 	text-align: right;
+	text-style: bold;
 	height: auto;
 }
 
@@ -98,6 +148,7 @@ StatusHeader {
 	dock: top;
 }
 
+
 ViewSwitcher {
 	align: center top;
 	padding: 0 1 1 1;
@@ -111,10 +162,42 @@ ContentSwitcher {
 	width: 100%;
 }
 
-Log {
+#daily_log {
 	align: center top;
+}
+
+DailyLog {
+	align: center top;
+	content-align: center top;
+}
+
+DailyEntry {
+	align: center middle;
+	text-align: center;
+	width: auto;
+	height: 4;
+	padding: 1 0 1 0;
+}
+
+
+StaticSpacer {
+	width: 1;
+}
+
+Input {
+	border: none;
+	background: rgb(30, 30, 30);
+}
+
+DailyTable {
+	align: center top;
+	content-align: center top;
 }
 
 FoodBook {}
 
 Goals {}
+
+Rule {
+	padding: 0 0 0 0;
+}
